@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Login</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='/css/viewer.css') }}"
+    />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  </head>
+  <body>
+    <div id="container">
+      <form method="POST">
+        <label for="username">Username</label>
+        <br />
+        <input type="text" id="username" name="username" required /><br />
+        <label for="password">Password</label>
+        <br />
+        <input type="password" id="password" name="password" required /><br />
+        <input type="submit" value="Login" />
+      </form>
+    </div>
+  </body>
+</html>

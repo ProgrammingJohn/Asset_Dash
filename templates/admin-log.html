@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Table</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='/css/admin-log.css') }}"
+    />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='/js/admin-log.js') }}"></script>
+  </head>
+  <body>
+    <div id="notifications"></div>
+    <div id="container">
+      <p id="table-name" class="center md">Log</p>
+      <hr />
+      <p class="center sm">Search</p>
+      <table id="admin-table">
+        <thead id="admin-table-search"></thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
+  </body>
+</html>

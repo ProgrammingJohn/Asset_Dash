@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Table</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='/css/admin-table.css') }}"
+    />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static', filename='/js/admin-table.js') }}"></script>
+  </head>
+  <body>
+    <div id="notifications"></div>
+    <div id="container">
+      <div>
+        <a href="/admin/log" class="link-button">Logs</a>
+        <a href="/admin/logout" class="link-button">Logout </a>
+        <a href="/view" class="link-button">Kiosk View</a>
+        <a href="/check-out" class="link-button">Check Out</a>
+      </div>
+      <div>
+        <button id="table-view-toggle" onclick="onTableViewToggle()">
+          View Users Table
+        </button>
+      </div>
+      <p id="table-name" class="center md">Assets</p>
+      <hr />
+      <p class="center sm">Search</p>
+      <table id="admin-table">
+        <thead id="admin-table-search"></thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
+  </body>
+</html>
