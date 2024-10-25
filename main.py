@@ -6,8 +6,10 @@ import pytz
 import datetime
 from typing import Literal
 import yaml
+import socket
 
 app = Flask(__name__)
+PORT = 9000
 
 try:
     with open('instance/env.yaml', 'r') as f:
@@ -51,6 +53,19 @@ class Assets(db.Model):
         return f'{self.time_checked},{self.asset_id},{self.name},{user.first_name},{user.last_name},{self.checked_out_by}'
 
 
+def get_ip_address() -> str:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 80))
+        ip_address = s.getsockname()[0]
+    except Exception as e:
+        ip_address = 'Unable to get IP address'
+    finally:
+        s.close()
+
+    return ip_address
+
+
 def add_users_from_csv(path="instance/roster.csv"):
     with app.app_context():
         with open(path, "r") as f:
@@ -82,11 +97,6 @@ def time_to_string(date):
     return date.strftime("%Y-%m-%d %I:%M %p")
 
 
-@app.route('/', methods=['GET'])
-def default():
-    return redirect(url_for('admin_login'))
-
-
 @app.route('/view', methods=['GET'])
 def view_table():
     return render_template('viewer.html')
@@ -109,7 +119,7 @@ def admin_login():
     return render_template('login.html')
 
 
-@app.route('/admin/table', methods=["GET"])
+@app.route('/admin', methods=["GET"])
 def admin_table():
     if not session.get('logged_in'):
         return redirect(url_for('admin_login'))
@@ -131,9 +141,9 @@ def logout():
     return redirect(url_for('admin_login'))
 
 
-@app.route("/check-out", methods=["GET"])
+@app.route("/", methods=["GET"])
 def check_out_page():
-    return render_template("check-out.html")
+    return render_template("check-out.html", ip=get_ip_address(), port=PORT)
 
 
 @app.route("/api/get/log", methods=["GET"])
@@ -342,4 +352,4 @@ def get_assets():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=9000, debug=True)
+    app.run(host="0.0.0.0", port=PORT, debug=True)
