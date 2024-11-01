@@ -66,21 +66,29 @@ def get_ip_address() -> str:
     return ip_address
 
 
-def add_users_from_csv(path="instance/roster.csv"):
-    with app.app_context():
-        with open(path, "r") as f:
-            users = f.readlines()[1:]
-            for user in users:
-                last_name, first_name = user.split(",")
-                user = Users(first_name=first_name,
-                             last_name=last_name)
-                print(user)
-                db.session.add(user)
-                db.session.commit()
 
+def add_users_from_csv(path="roster_main.csv"):
+    with open(path, "r") as f:
+        users = f.readlines()[1:]
+    unique_users = []
+    for user in users:
+        user = user.replace("\n", "")
+        if user not in unique_users:
+            unique_users.append(user)
+
+    with app.app_context():
+        db.session.query(Users).delete()
+
+        for user in unique_users:
+            last_name, first_name = user.split(",")
+            user = Users(first_name=first_name, last_name=last_name)
+            db.session.add(user)
+
+        db.session.commit()
 
 with app.app_context():
     db.create_all()
+    add_users_from_csv()
 
 
 def get_eastern_time():
@@ -200,11 +208,11 @@ def check_in():
     data = json.loads(request.data.decode())
     asset_id = data["asset_id"]
     asset = Assets.query.filter_by(asset_id=asset_id).one_or_none()
-    log_transaction("in", asset)
     if not asset:
         return f'Asset {asset_id} does not exist', 400
     if not asset.checked_out_by:
         return f'Asset {asset_id} already checked in', 400
+    log_transaction("in", asset)
     asset.checked_out_by = None
     asset.time_checked = get_eastern_time()
     db.session.commit()
@@ -323,9 +331,11 @@ def delete_asset():
 @app.route("/api/get/assets/out", methods=["GET"])
 def get_assets_out():
     assets = Assets.query.filter(Assets.checked_out_by != None).all()
+    print(assets, assets[0])
     assets_list = []
     for asset in assets:
-        user = Users.query.get(asset.checked_out_by)
+        id = asset.checked_out_by
+        user = db.session.query(Users).filter(Users.user_id == id).one_or_none()
         assets_list.append({
             'asset_id': asset.asset_id,
             'name': asset.name,
@@ -352,4 +362,4 @@ def get_assets():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=PORT, debug=True)
+    app.run(host="0.0.0.0", port=PORT, debug=False)
