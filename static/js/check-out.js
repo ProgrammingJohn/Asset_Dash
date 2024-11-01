@@ -5,6 +5,7 @@ $(document).ready(function () {
   var currentUser = null;
   var isAssetScanning = false;
   var userTimeout = null;
+  var logoutDelay = 60000
   $("#prompt").text("Type Name or Scan Asset:");
 
   $.ajax({
@@ -101,7 +102,7 @@ $(document).ready(function () {
         matches.push(user);
       }
     }
-    return matches.slice(0, 5);
+    return matches;
   }
 
   function logoutCurrentUser() {
@@ -116,7 +117,7 @@ $(document).ready(function () {
   }
 
   $(document).on("keydown", function (event) {
-    console.log("ping");
+    console.log("ping"+event.key);
     if (event.key == "~" || event.key == "*") {
       console.log(event.key, inputBuffer);
       inputBuffer += event.key;
@@ -135,7 +136,7 @@ $(document).ready(function () {
       if (currentUser) {
         checkOutAsset(currentUser, inputBuffer);
         clearTimeout(userTimeout);
-        userTimeout = setTimeout(logoutCurrentUser, 10000);
+        userTimeout = setTimeout(logoutCurrentUser, logoutDelay);
       } else {
         checkInAsset(inputBuffer);
       }
@@ -175,7 +176,7 @@ $(document).ready(function () {
             `Welcome ${fullName}! \n Press Escape for new user`,
             "success"
           );
-          userTimeout = setTimeout(logoutCurrentUser, 10000);
+          userTimeout = setTimeout(logoutCurrentUser, logoutDelay);
           inputBuffer = "";
           $("#input").val("");
           return;
