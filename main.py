@@ -51,6 +51,8 @@ class Assets(db.Model):
     def get_csv_string(self) -> str:
         user = Users.query.filter_by(user_id=self.checked_out_by).one_or_none()
         return f'{self.time_checked},{self.asset_id},{self.name},{user.first_name},{user.last_name},{self.checked_out_by}'
+    def get_descriptor(self) -> str:
+        return f'{self.name} ({self.asset_id})'
 
 
 def get_ip_address() -> str:
@@ -139,7 +141,7 @@ def admin_log():
     if not session.get('logged_in'):
         return redirect(url_for('admin_login'))
     # return render_template("admin-log.html")
-    with open('asset_log.csv', 'r') as f:
+    with open('instance/asset_log.csv', 'r') as f:
         return "<pre>"+f.read()+"</pre>"
 
 
@@ -209,14 +211,14 @@ def check_in():
     asset_id = data["asset_id"]
     asset = Assets.query.filter_by(asset_id=asset_id).one_or_none()
     if not asset:
-        return f'Asset {asset_id} does not exist', 400
+        return f'Asset (asset.get_descriptor()) does not exist', 400
     if not asset.checked_out_by:
-        return f'Asset {asset_id} already checked in', 400
+        return f'Asset {asset.get_descriptor()} already checked in', 400
     log_transaction("in", asset)
     asset.checked_out_by = None
     asset.time_checked = get_eastern_time()
     db.session.commit()
-    return f'{asset.name} checked in successfully', 200
+    return f'{asset.get_descriptor()} checked in successfully', 200
 
 
 @app.route("/api/post/users/edit", methods=["POST"])

@@ -5,22 +5,31 @@ $(document).ready(function () {
   var currentUser = null;
   var isAssetScanning = false;
   var userTimeout = null;
-  var logoutDelay = 60000
+  var logoutDelay = 60000;
+  var infoUpdateDelay = 30000;
   $("#prompt").text("Type Name or Scan Asset:");
+  
+  function getUsersList() {
+    $.ajax({
+      url: "/api/get/users/all",
+      method: "GET",
+      dataType: "json",
+      success: function (data) {
+        users = data;
+      },
+      error: function (xhr, status, error) {
+        console.error("Error:", status, error);
+      },
+    });
+  }
 
-  $.ajax({
-    url: "/api/get/users/all",
-    method: "GET",
-    dataType: "json",
-    success: function (data) {
-      users = data;
-    },
-    error: function (xhr, status, error) {
-      console.error("Error:", status, error);
-    },
-  });
-
+  getUsersList();
   updateTable();
+
+  setInterval(() => {
+      getUsersList();
+      updateTable();
+  }, infoUpdateDelay);
 
   function updateTable() {
     $("#table-content").empty();
