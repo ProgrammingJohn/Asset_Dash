@@ -28,10 +28,6 @@ body {
   background-color: white;
 }
 
-button:hover {
-  background-color: #00438a;
-}
-
 button,
 .link-button {
   display: inline-block;
@@ -64,4 +60,32 @@ button:hover,
 }
 .error {
   background-color: #d05d5d;
+}
+#table-content {
+  padding: 3px;
+  margin-top: 10px;
+  /* background-color: rgb(231, 231, 231); */
+  color: #000000;
+  border-collapse: collapse;
+}
+#table-content tr:nth-child(odd) {
+  background-color: #cdcdcd;
+}
+#table-content td:nth-child(1) {
+  width: 50px;
+}
+#table-content td:nth-child(1) input {
+  width: 80%;
+}
+td {
+  width: auto;
+  padding: 2px;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  border: 2px solid #000;
+}
+input[type="text"],
+input[type="number"] {
+  background-color: #00000000;
+  border-width: 1px;
 }

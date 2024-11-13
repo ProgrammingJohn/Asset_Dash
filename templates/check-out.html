@@ -16,7 +16,7 @@
     <div id="notifications"></div>
     <div id="currentUserName"></div>
     
-    <div id="container">
+    <div class="container">
       <div id="prompt"></div>
     <input type="text" id="input" readonly/>
     <div id="matches-container">
@@ -24,11 +24,33 @@
     </div>
     </div>
   </div>
-    <div id="container">
-      <div><strong>Checked Out Assets</strong></div>
-        <table id="table-content">
-          <tbody></tbody>
-        </table>
-    <script src="{{url_for('static', filename='/js/check-out.js')}}"></script>
+  <div class="container">
+    <div><strong>Checked Out Assets</strong></div>
+      <table id="table-content">
+        <tbody></tbody>
+      </table>
+  </div>
+  <div class="container">
+    <div><strong>Instructions</strong></div>
+    <div id="double-box">
+      <div class="box">
+        <span>Check In</span>
+        <ol class="styled-list">
+          <li>Scan asset tag with scanner</li>
+        </ol>
+      </div>
+      <div class="box">
+        <span>Check Out</span>
+        <ol class="styled-list">
+          <li>Type your name until logged in</li>
+          <li>Scan asset tag with scanner</li>
+          <li>press [ ESC ] to logout</li>
+        </ol>
+
+      </div>
+    </div>
+  </div>
+    
+  <script src="{{url_for('static', filename='/js/check-out.js')}}"></script>
   </body>
 </html>

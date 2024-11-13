@@ -50,7 +50,8 @@ class Assets(db.Model):
 
     def get_csv_string(self) -> str:
         user = Users.query.filter_by(user_id=self.checked_out_by).one_or_none()
-        return f'{self.time_checked},{self.asset_id},{self.name},{user.first_name},{user.last_name},{self.checked_out_by}'
+        return f'{time_to_string(get_eastern_time())},{self.asset_id},{self.name},{user.first_name},{user.last_name},{self.checked_out_by}'
+
     def get_descriptor(self) -> str:
         return f'{self.name} ({self.asset_id})'
 
@@ -66,7 +67,6 @@ def get_ip_address() -> str:
         s.close()
 
     return ip_address
-
 
 
 def add_users_from_csv(path="roster_main.csv"):
@@ -87,6 +87,7 @@ def add_users_from_csv(path="roster_main.csv"):
             db.session.add(user)
 
         db.session.commit()
+
 
 with app.app_context():
     db.create_all()
@@ -140,9 +141,7 @@ def admin_table():
 def admin_log():
     if not session.get('logged_in'):
         return redirect(url_for('admin_login'))
-    # return render_template("admin-log.html")
-    with open('instance/asset_log.csv', 'r') as f:
-        return "<pre>"+f.read()+"</pre>"
+    return render_template("admin-log.html")
 
 
 @app.route('/admin/logout')
@@ -156,12 +155,17 @@ def check_out_page():
     return render_template("check-out.html", ip=get_ip_address(), port=PORT)
 
 
+@app.route("/directory", methods=["GET"])
+def directory():
+    return render_template("directory.html", ip=get_ip_address(), port=PORT)
+
+
 @app.route("/api/get/log", methods=["GET"])
 def get_log():
     logs = []
     headers = ["type", "time_checked", "asset_id", "name",
                "first_name", "last_name", "user_id"]
-    with open("asset_log.csv", "r") as f:
+    with open("instance/asset_log.csv", "r") as f:
         for transaction in f.readlines():
             transaction = transaction[:-2]
             transaction_dir = {}
@@ -337,7 +341,8 @@ def get_assets_out():
     assets_list = []
     for asset in assets:
         id = asset.checked_out_by
-        user = db.session.query(Users).filter(Users.user_id == id).one_or_none()
+        user = db.session.query(Users).filter(
+            Users.user_id == id).one_or_none()
         assets_list.append({
             'asset_id': asset.asset_id,
             'name': asset.name,
@@ -364,4 +369,4 @@ def get_assets():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=PORT, debug=False)
+    app.run(host="0.0.0.0", port=PORT, debug=True)
