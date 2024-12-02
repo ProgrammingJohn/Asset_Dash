@@ -13,7 +13,7 @@ function notify(text, status) {
 function fetchAssetData(id = "", name = "", type = "") {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: "/api/get/assets/all",
+      url: "/assets/all",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -40,7 +40,7 @@ function fetchAssetData(id = "", name = "", type = "") {
 function fetchUserData(user_id = "", first_name = "", last_name = "") {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: "/api/get/users/all",
+      url: "/users/all",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -92,7 +92,7 @@ function addUser() {
   userLastName = $(`#addlastname`).val();
 
   $.ajax({
-    url: "/api/post/users/add",
+    url: "/users/add",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -114,7 +114,7 @@ function addAsset() {
   assetName = $(`#addname`).val();
   assetType = $(`#addtype`).val();
   $.ajax({
-    url: "/api/post/assets/add",
+    url: "/assets/add",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -134,7 +134,7 @@ function addAsset() {
 
 function deleteUser(id) {
   $.ajax({
-    url: "/api/post/users/delete",
+    url: "/users/delete",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({ user_id: id }),
@@ -150,7 +150,7 @@ function deleteUser(id) {
 
 function deleteAsset(id) {
   $.ajax({
-    url: "/api/post/assets/delete",
+    url: "/assets/delete",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({ asset_id: id }),
@@ -168,7 +168,7 @@ function editUser(id) {
   editedFirstName = $(`#${id}firstname`).val();
   editedLastName = $(`#${id}lastname`).val();
   $.ajax({
-    url: "/api/post/users/edit",
+    url: "/users/edit",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -191,7 +191,7 @@ function editAsset(id) {
   editedName = $(`#${id}name`).val();
   editedType = $(`#${id}type`).val();
   $.ajax({
-    url: "/api/post/assets/edit",
+    url: "/assets/edit",
     method: "POST",
     contentType: "application/json",
     data: JSON.stringify({

@@ -1,8 +1,45 @@
 var calendar;
 var tableBody;
 
+function getSlingEvents() {
+  return new Promise((resolve, reject) => {
+    fullCalendarEvents = [];
+    $.ajax({
+      url: "/utils/sling-events",
+      method: "GET",
+      dataType: "json",
+      data: {
+        days_in_advance: 21,
+      },
+      success: function (data) {
+        data.forEach((event) => {
+          title = "";
+          if (event.worker) {
+            title = `${event.location_name} | ${event.worker.first_name} ${event.worker.last_name}`;
+          } else {
+            title = event.location_name;
+          }
+          fullCalendarEvents.push({
+            id: event.id,
+            title: title,
+            start: event.date_start,
+            end: event.date_end,
+            className: "slingEvent",
+          });
+        });
+        resolve(fullCalendarEvents);
+      },
+      error: function (xhr, status, error) {
+        console.error("Error:", status, error);
+        reject(error);
+      },
+    });
+  });
+}
+
 function updateCalender() {
-  calendar.refetchEvents();
+  calendar.getEventSourceById("googleCalendar").refetch();
+  calendar.getEventSourceById("slingCalendar").refetch();
 }
 
 function updateTable(data) {
@@ -24,8 +61,9 @@ function updateTable(data) {
   });
 }
 
-$(document).ready(function () {
+async function main() {
   tableBody = $("#table_scroll tbody");
+  slingEvents = await getSlingEvents();
   const calendarEl = document.getElementById("calendar");
   calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridFourWeek",
@@ -39,11 +77,28 @@ $(document).ready(function () {
     headerToolbar: false,
     displayEventEnd: true,
     timeZone: "ETC",
-    googleCalendarApiKey: "AIzaSyB6XMk7lITvTNeZUGMWl69y7sK-3d7iLRY",
-    events: {
-      googleCalendarId:
-        "da4efe4dd6407df36a9ee998e116aae9d1eaf02f0e11d7093f7b17b74872a511@group.calendar.google.com",
-    },
+
+    eventSources: [
+      {
+        id: "googleCalendar",
+        googleCalendarApiKey: "AIzaSyB6XMk7lITvTNeZUGMWl69y7sK-3d7iLRY",
+        googleCalendarId:
+          "da4efe4dd6407df36a9ee998e116aae9d1eaf02f0e11d7093f7b17b74872a511@group.calendar.google.com",
+        className: "googleCalendarEvent",
+      },
+      {
+        id: "slingCalendar",
+        events: async function (fetchInfo, successCallback, failureCallback) {
+          try {
+            slingEvents = await getSlingEvents();
+            successCallback(slingEvents);
+          } catch (error) {
+            console.error("Error fetching Sling API events:", error);
+            failureCallback(error);
+          }
+        },
+      },
+    ],
   });
 
   setInterval(updateCalender, 15000);
@@ -51,6 +106,10 @@ $(document).ready(function () {
   fetchData();
   calendar.render();
   pageScroll();
+}
+
+$(document).ready(function () {
+  main();
 });
 
 var my_time;
@@ -69,7 +128,7 @@ function pageScroll() {
 
 function fetchData() {
   $.ajax({
-    url: "/api/get/assets/out",
+    url: "/assets/out",
     method: "GET",
     dataType: "json",
     success: function (data) {
