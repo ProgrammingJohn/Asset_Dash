@@ -21,7 +21,7 @@ function fetchLogData(
 ) {
   return new Promise((resolve, reject) => {
     $.ajax({
-      url: "/api/get/log",
+      url: "/utils/asset-log",
       method: "GET",
       dataType: "json",
       success: function (data) {

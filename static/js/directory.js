@@ -11,7 +11,7 @@ $(document).ready(function () {
 function updateTable() {
   $("#table-content").empty();
   $.ajax({
-    url: "/api/get/assets/all",
+    url: "/assets/all",
     method: "GET",
     dataType: "json",
     success: function (data) {

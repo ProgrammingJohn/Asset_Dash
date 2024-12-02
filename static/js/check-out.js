@@ -8,10 +8,10 @@ $(document).ready(function () {
   var logoutDelay = 60000;
   var infoUpdateDelay = 30000;
   $("#prompt").text("Type Name or Scan Asset:");
-  
+
   function getUsersList() {
     $.ajax({
-      url: "/api/get/users/all",
+      url: "/users/all",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -27,14 +27,14 @@ $(document).ready(function () {
   updateTable();
 
   setInterval(() => {
-      getUsersList();
-      updateTable();
+    getUsersList();
+    updateTable();
   }, infoUpdateDelay);
 
   function updateTable() {
     $("#table-content").empty();
     $.ajax({
-      url: "/api/get/assets/out",
+      url: "/assets/out",
       method: "GET",
       dataType: "json",
       success: function (data) {
@@ -62,7 +62,7 @@ $(document).ready(function () {
 
   function checkOutAsset(user, assetId) {
     $.ajax({
-      url: "/api/post/assets/check-out",
+      url: "/assets/check-out",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ user_id: user.user_id, asset_id: assetId }),
@@ -78,7 +78,7 @@ $(document).ready(function () {
 
   function checkInAsset(assetId) {
     $.ajax({
-      url: "/api/post/assets/check-in",
+      url: "/assets/check-in",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ asset_id: assetId }),
@@ -126,14 +126,12 @@ $(document).ready(function () {
   }
 
   $(document).on("keydown", function (event) {
-    console.log("ping"+event.key);
     if (event.key == "~" || event.key == "*") {
       console.log(event.key, inputBuffer);
       inputBuffer += event.key;
       if (inputBuffer == "*~*") {
         inputBuffer = "";
         isAssetScanning = true;
-        console.log("valid scan");
       }
     }
     if (isAssetScanning && event.key >= "0" && event.key <= "9") {
