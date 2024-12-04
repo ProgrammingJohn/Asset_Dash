@@ -3,3 +3,4 @@ env
 instance/*
 .DS_Store
 hidden_conf.txt
+roster_main.csv
